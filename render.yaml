@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: stress-detection
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn stress_detection_django.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
