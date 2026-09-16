@@ -13,6 +13,10 @@ IMG_SIZE = 48
 CLASSES = ['angry', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised']
 STRESS_EMOTIONS = ['angry', 'disgusted', 'fearful', 'sad']
 
+face_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+)
+
 os.makedirs(settings.UPLOAD_FOLDER, exist_ok=True)
 
 
