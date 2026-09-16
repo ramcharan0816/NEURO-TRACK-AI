@@ -5,9 +5,7 @@ import cv2
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
-from tensorflow.keras.optimizers import Adam
+
 
 # ---------------- CONFIG ----------------
 MODEL_PATH = os.path.join(settings.BASE_DIR, 'model.h5')
@@ -20,6 +18,9 @@ os.makedirs(settings.UPLOAD_FOLDER, exist_ok=True)
 
 # ---------------- BUILD MODEL ----------------
 def build_model():
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+    from tensorflow.keras.optimizers import Adam
     model = Sequential()
     model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(48, 48, 1)))
     model.add(Conv2D(64, (3, 3), activation='relu'))
