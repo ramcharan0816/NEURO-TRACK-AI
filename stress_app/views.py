@@ -43,16 +43,17 @@ def build_model():
 
 
 # ---------------- LOAD MODEL ----------------
-model = build_model()
-model.load_weights(MODEL_PATH)
-print("✅ Model Loaded Successfully")
+model = None
 
-# ---------------- FACE DETECTOR ----------------
-face_cascade = cv2.CascadeClassifier(
-    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-)
-print("✅ Face Cascade Loaded")
+def get_model():
+    global model
 
+    if model is None:
+        model = build_model()
+        model.load_weights(MODEL_PATH)
+        print("✅ Model Loaded Successfully")
+
+    return model
 
 # ---------------- HELPER ----------------
 
