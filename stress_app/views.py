@@ -55,19 +55,17 @@ print("✅ Face Cascade Loaded")
 
 
 # ---------------- HELPER ----------------
+
 def predict_emotion(img_path):
     img = cv2.imread(img_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Fix lighting differences with histogram equalization
     gray_eq = cv2.equalizeHist(gray)
 
-    # Attempt 1: normal face detection
     faces = face_cascade.detectMultiScale(
         gray_eq, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
     )
 
-    # Attempt 2: looser params
     if len(faces) == 0:
         faces = face_cascade.detectMultiScale(
             gray_eq, scaleFactor=1.05, minNeighbors=3, minSize=(20, 20)
@@ -76,30 +74,39 @@ def predict_emotion(img_path):
     face_found = len(faces) > 0
 
     if face_found:
-        # Use the largest face
         faces = sorted(faces, key=lambda f: f[2] * f[3], reverse=True)
         x, y, w, h = faces[0]
+
         pad = int(min(w, h) * 0.1)
+
         img_h, img_w = gray_eq.shape
+
         x1 = max(0, x - pad)
         y1 = max(0, y - pad)
         x2 = min(img_w, x + w + pad)
         y2 = min(img_h, y + h + pad)
+
         roi = gray_eq[y1:y2, x1:x2]
+
     else:
-        # Fallback: center crop
         h, w = gray_eq.shape
         mh, mw = h // 6, w // 6
         roi = gray_eq[mh:h - mh, mw:w - mw]
 
     resized = cv2.resize(roi, (IMG_SIZE, IMG_SIZE))
+
     arr = resized.astype('float32') / 255.0
     arr = np.expand_dims(np.expand_dims(arr, -1), 0)
 
+    model = get_model()
+
     preds = model.predict(arr, verbose=0)[0]
+
     pred_idx = int(np.argmax(preds))
     emotion = CLASSES[pred_idx]
+
     confidence = round(float(preds[pred_idx]) * 100, 2)
+
     stress = "STRESSED 😤" if emotion in STRESS_EMOTIONS else "NOT STRESSED 😊"
 
     return emotion, confidence, stress, face_found
